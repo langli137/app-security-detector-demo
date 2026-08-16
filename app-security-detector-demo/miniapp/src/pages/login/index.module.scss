@@ -1,0 +1,158 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, $color-bg-dark 0%, #1E293B 60%, $color-bg-page 60%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 $page-padding;
+}
+
+.logoSection {
+  margin-top: 120rpx;
+  text-align: center;
+}
+
+.logo {
+  width: 120rpx;
+  height: 120rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto $spacing-md;
+  box-shadow: 0 8rpx 32rpx rgba($color-primary, 0.3);
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8rpx); }
+}
+
+.logoIcon {
+  font-size: 56rpx;
+  color: $color-text-white;
+}
+
+.appName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  margin-bottom: $spacing-xs;
+}
+
+.appTagline {
+  font-size: $font-size-sm;
+  color: rgba($color-text-white, 0.6);
+}
+
+.formCard {
+  width: 100%;
+  max-width: $max-content-width;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-top: $spacing-xl;
+  box-shadow: $shadow-float;
+}
+
+.tabRow {
+  display: flex;
+  margin-bottom: $spacing-lg;
+  background: $color-bg-hover;
+  border-radius: $radius-button;
+  padding: 4rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: $spacing-sm 0;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-tertiary;
+  transition: all $transition-base;
+
+  &.active {
+    background: $color-bg-card;
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+    box-shadow: $shadow-card;
+  }
+}
+
+.inputGroup {
+  margin-bottom: $spacing-md;
+}
+
+.inputLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-xs;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  height: 88rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  padding: 0 $spacing-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  border: 2rpx solid transparent;
+  transition: all $transition-base;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: $color-primary;
+    background: $color-bg-card;
+  }
+}
+
+.btnSubmit {
+  width: 100%;
+  height: $button-height-lg;
+  margin-top: $spacing-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  @include button-reset;
+  transition: all $transition-base;
+  box-shadow: 0 4rpx 16rpx rgba($color-primary, 0.3);
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.errorText {
+  margin-top: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-error;
+  text-align: center;
+}
+
+.skipText {
+  margin-top: $spacing-lg;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.bottomSafe {
+  height: calc(80rpx + env(safe-area-inset-bottom));
+}

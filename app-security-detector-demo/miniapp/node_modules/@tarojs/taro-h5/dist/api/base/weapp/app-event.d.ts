@@ -1,0 +1,20 @@
+/// <reference types="types/api" />
+import Taro from '@tarojs/api';
+export declare const onUnhandledRejection: typeof Taro.onUnhandledRejection;
+export declare const onThemeChange: typeof Taro.onThemeChange;
+export declare const onPageNotFound: typeof Taro.onPageNotFound;
+export declare const onLazyLoadError: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const onError: typeof Taro.onError;
+export declare const onAudioInterruptionEnd: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const onAudioInterruptionBegin: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const onAppShow: typeof Taro.onAppShow;
+export declare const onAppHide: typeof Taro.onAppHide;
+export declare const offUnhandledRejection: typeof Taro.offUnhandledRejection;
+export declare const offThemeChange: typeof Taro.offThemeChange;
+export declare const offPageNotFound: typeof Taro.offPageNotFound;
+export declare const offLazyLoadError: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const offError: typeof Taro.offError;
+export declare const offAudioInterruptionEnd: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const offAudioInterruptionBegin: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const offAppShow: typeof Taro.offAppShow;
+export declare const offAppHide: typeof Taro.offAppHide;

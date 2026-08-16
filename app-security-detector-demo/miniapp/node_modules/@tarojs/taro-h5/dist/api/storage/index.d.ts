@@ -1,0 +1,20 @@
+/// <reference types="types/api" />
+import Taro from '@tarojs/api';
+export declare const setStorageSync: typeof Taro.setStorageSync;
+export declare const setStorage: typeof Taro.setStorage;
+export declare const revokeBufferURL: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const removeStorageSync: typeof Taro.removeStorageSync;
+export declare const removeStorage: typeof Taro.removeStorage;
+export declare const getStorageSync: typeof Taro.getStorageSync;
+export declare const getStorageInfoSync: typeof Taro.getStorageInfoSync;
+export declare const getStorageInfo: typeof Taro.getStorageInfo;
+export declare const getStorage: typeof Taro.getStorage;
+export declare const createBufferURL: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const clearStorageSync: typeof Taro.clearStorageSync;
+export declare const clearStorage: typeof Taro.clearStorage;
+export declare const batchSetStorageSync: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const batchSetStorage: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const batchGetStorageSync: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export declare const batchGetStorage: (option?: {}, ...args: any[]) => Promise<Partial<TaroGeneral.CallbackResult> & Record<string, unknown> & TaroGeneral.CallbackResult>;
+export * from './background-fetch';
+export * from './cache-manager';

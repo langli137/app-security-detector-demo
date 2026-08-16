@@ -1,0 +1,410 @@
+# 移动应用安全检测规则配置
+# 可自行增删改规则，无需修改代码
+
+rules:
+  # ========== 网络通信 ==========
+  - id: NET_001
+    name: "发现明文 HTTP 地址"
+    severity: Medium
+    category: "网络通信"
+    description: "代码或资源中包含明文 HTTP 地址，可能导致传输内容被窃听或篡改。"
+    suggestion: "建议改用 HTTPS，并在服务端配置有效 TLS 证书。"
+    type: regex
+    pattern: 'http://[^\s"''<>]+'
+    flags: IGNORECASE
+    max_deduction: 5
+
+  - id: NET_002
+    name: "允许明文网络流量"
+    severity: Medium
+    category: "网络通信"
+    description: "应用配置允许明文网络流量，可能降低传输安全性。"
+    suggestion: "建议关闭明文流量，并为必要的开发环境单独配置网络安全策略。"
+    type: regex
+    pattern: 'usesCleartextTraffic\s*=\s*["'']true["'']'
+    flags: IGNORECASE
+    max_deduction: 5
+
+  - id: NET_003
+    name: "网络安全配置信任用户证书"
+    severity: High
+    category: "网络通信"
+    description: "network_security_config.xml 中配置信任用户证书，可能被中间人攻击利用。"
+    suggestion: "移除 user 证书信任，仅信任系统 CA。"
+    type: keyword
+    keyword: 'certificates src="user"'
+    max_deduction: 5
+
+  # ========== 密钥泄露 ==========
+  - id: SECRET_001
+    name: "疑似硬编码密钥或 Token"
+    severity: High
+    category: "密钥泄露"
+    description: "代码或配置中发现疑似硬编码密钥，攻击者可能通过反编译或源码泄露获取。"
+    suggestion: "建议移除客户端硬编码密钥，改为服务端签发临时 Token，并对已泄露密钥进行轮换。"
+    type: regex
+    pattern: '(?i)(api[_-]?key|secret|token|access[_-]?key|password)\s*[:=]\s*["'']?[A-Za-z0-9_\-]{8,}'
+    max_deduction: 5
+
+  - id: SECRET_002
+    name: "疑似硬编码 IP 地址"
+    severity: Low
+    category: "密钥泄露"
+    description: "代码中硬编码了 IP 地址，可能导致服务器拓扑暴露。"
+    suggestion: "使用域名或配置中心动态获取服务器地址。"
+    type: regex
+    pattern: '\b(?:\d{1,3}\.){3}\d{1,3}\b'
+    flags: IGNORECASE
+    max_deduction: 3
+
+  # ========== 权限与隐私 ==========
+  - id: PERM_001
+    name: "申请敏感权限"
+    severity: Medium
+    category: "权限与隐私"
+    description: "应用申请了敏感权限，可能涉及用户隐私数据访问。"
+    suggestion: "请确认该权限与核心业务功能直接相关，并在隐私政策和运行时弹窗中清晰说明用途。"
+    type: keyword_list
+    keywords:
+      - READ_SMS
+      - SEND_SMS
+      - READ_CONTACTS
+      - ACCESS_FINE_LOCATION
+      - RECORD_AUDIO
+      - CAMERA
+      - READ_PHONE_STATE
+    max_deduction: 5
+
+  - id: PERM_002
+    name: "危险权限组"
+    severity: Medium
+    category: "权限与隐私"
+    description: "应用申请了危险权限，可能涉及用户隐私数据访问。"
+    suggestion: "请确认该权限与核心业务功能直接相关，并在隐私政策中清晰说明用途。"
+    type: keyword_list
+    keywords:
+      - READ_CALL_LOG
+      - WRITE_CALL_LOG
+      - READ_CALENDAR
+      - WRITE_CALENDAR
+      - GET_ACCOUNTS
+      - ACCESS_COARSE_LOCATION
+    max_deduction: 3
+
+  # ========== 配置风险 ==========
+  - id: CONFIG_001
+    name: "Debug 模式开启"
+    severity: Medium
+    category: "配置风险"
+    description: "发布包中开启调试模式会增加被调试和逆向分析的风险。"
+    suggestion: "正式发布版本应关闭 android:debuggable。"
+    type: regex
+    pattern: 'debuggable\s*=\s*["'']true["'']'
+    flags: IGNORECASE
+    max_deduction: 5
+
+  - id: CONFIG_002
+    name: "默认未处理异常处理器"
+    severity: Low
+    category: "配置风险"
+    description: "应用设置了默认未处理异常处理器，可能向远程服务器泄露敏感信息。"
+    suggestion: "确保异常处理器不会在日志或报告中包含敏感数据。"
+    type: keyword
+    keyword: "Thread.setDefaultUncaughtExceptionHandler"
+    max_deduction: 3
+
+  - id: CONFIG_003
+    name: "允许数据备份"
+    severity: Low
+    category: "配置风险"
+    description: "应用允许通过 adb backup 导出数据，可能泄露敏感信息。"
+    suggestion: "发布版本应设置 android:allowBackup=\"false\"。"
+    type: regex
+    pattern: 'allowBackup\s*=\s*["'']true["'']'
+    flags: IGNORECASE
+    max_deduction: 3
+
+  - id: CONFIG_004
+    name: "禁用 StrictMode"
+    severity: Low
+    category: "配置风险"
+    description: "代码中显式禁用了 StrictMode，可能掩盖潜在的安全问题。"
+    suggestion: "开发阶段应启用 StrictMode 以检测潜在的安全问题。"
+    type: keyword_all
+    keywords:
+      - "StrictMode"
+      - "penaltyDeath"
+    max_deduction: 2
+
+  # ========== WebView 风险 ==========
+  - id: WEBVIEW_001
+    name: "WebView 启用 JavaScript"
+    severity: Medium
+    category: "WebView 风险"
+    description: "WebView 启用 JavaScript 后，如果加载不可信内容，可能扩大攻击面。"
+    suggestion: "仅在必要页面启用 JavaScript，并限制加载来源。"
+    type: regex
+    pattern: 'setJavaScriptEnabled\s*\(\s*true\s*\)'
+    max_deduction: 5
+
+  - id: WEBVIEW_002
+    name: "WebView 暴露 JavaScript 接口"
+    severity: High
+    category: "WebView 风险"
+    description: "WebView 向网页暴露原生接口，若加载不可信页面可能导致接口被滥用。"
+    suggestion: "仅向可信页面暴露最小接口，并校验 URL 来源。"
+    type: keyword
+    keyword: "addJavascriptInterface"
+    max_deduction: 5
+
+  - id: WEBVIEW_003
+    name: "WebView 允许文件访问"
+    severity: Medium
+    category: "WebView 风险"
+    description: "WebView 允许文件访问，可能导致本地文件被恶意网页读取。"
+    suggestion: "禁用 WebView 文件访问，或仅允许访问必要目录。"
+    type: keyword_all
+    keywords:
+      - "WebSettings"
+      - "setAllowFileAccess"
+      - "true"
+    max_deduction: 4
+
+  - id: WEBVIEW_004
+    name: "WebView 允许从文件 URL 访问所有源"
+    severity: High
+    category: "WebView 风险"
+    description: "WebView 允许 file:// 源访问所有内容，可能导致本地文件泄露。"
+    suggestion: "禁用 setAllowUniversalAccessFromFileURLs。"
+    type: keyword
+    keyword: "setAllowUniversalAccessFromFileURLs"
+    max_deduction: 5
+
+  - id: WEBVIEW_005
+    name: "WebView 启用地理定位"
+    severity: Low
+    category: "WebView 风险"
+    description: "WebView 启用了地理定位，可能泄露用户位置信息。"
+    suggestion: "仅在必要时启用地理定位，并获取用户明确授权。"
+    type: keyword
+    keyword: "setGeolocationEnabled"
+    max_deduction: 2
+
+  - id: WEBVIEW_006
+    name: "WebView 保存表单数据"
+    severity: Low
+    category: "WebView 风险"
+    description: "WebView 保存了表单数据和密码，可能被其他应用读取。"
+    suggestion: "禁用 WebView 表单数据保存功能。"
+    type: keyword
+    keyword: "setSaveFormData"
+    max_deduction: 2
+
+  # ========== 网络通信（TLS/SSL） ==========
+  - id: TLS_001
+    name: "疑似忽略 SSL 证书错误"
+    severity: High
+    category: "网络通信"
+    description: "代码疑似在证书错误时继续访问，可能导致中间人攻击风险。"
+    suggestion: "不要忽略 SSL 错误，应阻断连接并提示用户。"
+    type: keyword_all
+    keywords:
+      - "onReceivedSslError"
+      - "proceed()"
+    max_deduction: 5
+
+  - id: TLS_002
+    name: "疑似信任任意主机名"
+    severity: High
+    category: "网络通信"
+    description: "主机名校验恒返回 true 会破坏 HTTPS 身份校验。"
+    suggestion: "使用系统默认主机名校验逻辑，不要在生产环境绕过校验。"
+    type: keyword_all
+    keywords:
+      - "HostnameVerifier"
+      - "return true"
+    max_deduction: 5
+
+  - id: TLS_003
+    name: "疑似绕过证书固定"
+    severity: High
+    category: "网络通信"
+    description: "代码可能绕过了证书固定（Certificate Pinning）校验。"
+    suggestion: "始终验证证书固定，不要在生产环境禁用。"
+    type: keyword_all
+    keywords:
+      - "CertificatePinner"
+      - "check"
+    max_deduction: 4
+
+  # ========== 密码学 ==========
+  - id: CRYPTO_001
+    name: "使用弱密码算法"
+    severity: Medium
+    category: "密码学"
+    description: "发现弱密码算法或不推荐的加密模式，可能不满足现代安全要求。"
+    suggestion: "建议使用 SHA-256、AES-GCM 等更安全的算法或模式，并遵循平台密码学最佳实践。"
+    type: keyword_list
+    keywords:
+      - MD5
+      - SHA1
+      - DES
+      - "AES/ECB"
+    max_deduction: 5
+
+  - id: CRYPTO_002
+    name: "使用不安全的随机数生成器"
+    severity: Medium
+    category: "密码学"
+    description: "使用 java.util.Random 而非 SecureRandom，可能产生可预测的随机数。"
+    suggestion: "安全场景应使用 java.security.SecureRandom。"
+    type: keyword_all
+    keywords:
+      - "java.util.Random"
+      - "new Random"
+    max_deduction: 4
+
+  # ========== 数据存储 ==========
+  - id: DATA_001
+    name: "SharedPreferences 全局可读写"
+    severity: Medium
+    category: "数据存储"
+    description: "SharedPreferences 设置了 MODE_WORLD_READABLE 或 MODE_WORLD_WRITEABLE，其他应用可读取敏感数据。"
+    suggestion: "使用 MODE_PRIVATE，敏感数据应加密存储。"
+    type: keyword
+    keyword: "MODE_WORLD_READABLE"
+    max_deduction: 4
+
+  - id: DATA_002
+    name: "未加密的本地数据存储"
+    severity: Medium
+    category: "数据存储"
+    description: "应用可能将敏感数据以明文形式存储在本地。"
+    suggestion: "敏感数据应使用 Android Keystore 加密存储。"
+    type: keyword
+    keyword: "getSharedPreferences"
+    max_deduction: 3
+
+  # ========== 组件导出风险 ==========
+  - id: COMP_001
+    name: "Activity 导出且无权限限制"
+    severity: Medium
+    category: "组件安全"
+    description: "Activity 设置了 exported=true 但未配置权限保护，可能被其他应用恶意调用。"
+    suggestion: "未必要导出的组件应设置 exported=false，或配置 android:permission 限制访问。"
+    type: keyword_all
+    keywords:
+      - "android:exported=\"true\""
+      - "<activity"
+    max_deduction: 4
+
+  - id: COMP_002
+    name: "Service 导出且无权限限制"
+    severity: High
+    category: "组件安全"
+    description: "Service 设置了 exported=true 但未配置权限保护，可能被其他应用调用执行任意代码。"
+    suggestion: "未必要导出的 Service 应设置 exported=false，或配置 android:permission 限制访问。"
+    type: keyword_all
+    keywords:
+      - "android:exported=\"true\""
+      - "<service"
+    max_deduction: 5
+
+  - id: COMP_003
+    name: "Receiver 导出且无权限限制"
+    severity: Medium
+    category: "组件安全"
+    description: "BroadcastReceiver 设置了 exported=true 且无权限保护，可能被其他应用伪造 Intent 触发。"
+    suggestion: "为 Receiver 配置 android:exported=false 或设置 android:permission。"
+    type: keyword_all
+    keywords:
+      - "android:exported=\"true\""
+      - "<receiver"
+    max_deduction: 4
+
+  # ========== 日志泄露 ==========
+  - id: LOG_001
+    name: "日志中输出敏感信息"
+    severity: Medium
+    category: "日志安全"
+    description: "代码中使用 Log 输出可能包含敏感信息的内容。"
+    suggestion: "发布版本应移除所有 Log 调用，或使用 BuildConfig.DEBUG 条件包裹。"
+    type: regex
+    pattern: 'Log\.(d|e|w|i|v)\(.*(password|token|secret|key|api|auth).*'
+    flags: IGNORECASE
+    max_deduction: 4
+
+  - id: LOG_002
+    name: "未过滤的打印语句"
+    severity: Low
+    category: "日志安全"
+    description: "代码中存在大量未过滤的 Log 打印语句。"
+    suggestion: "发布版本应移除调试日志。"
+    type: regex
+    pattern: 'Log\.(d|e|w|v)\('
+    flags: IGNORECASE
+    max_deduction: 2
+
+  # ========== 代码安全 ==========
+  - id: CODE_001
+    name: "动态代码加载"
+    severity: High
+    category: "代码安全"
+    description: "应用使用动态加载代码（DexClassLoader / PathClassLoader），可能加载恶意代码。"
+    suggestion: "避免动态加载代码，必须使用时应对加载的代码进行完整性校验。"
+    type: keyword_all
+    keywords:
+      - "DexClassLoader"
+      - "loadClass"
+    max_deduction: 5
+
+  - id: CODE_002
+    name: "使用反射调用敏感 API"
+    severity: Medium
+    category: "代码安全"
+    description: "代码使用反射调用敏感 API，可能绕过访问控制。"
+    suggestion: "审查反射调用的必要性，确保不会绕过安全控制。"
+    type: keyword
+    keyword: "getMethod"
+    max_deduction: 3
+
+  # ========== 进程间通信 ==========
+  - id: IPC_001
+    name: "PendingIntent 可被修改"
+    severity: Medium
+    category: "进程安全"
+    description: "PendingIntent 未设置 FLAG_IMMUTABLE，可能被其他应用替换或修改。"
+    suggestion: "PendingIntent 应设置 FLAG_IMMUTABLE 或 FLAG_MUTABLE（按需选择）。"
+    type: keyword
+    keyword: "PendingIntent.get"
+    max_deduction: 4
+
+  # ========== Root/调试检测 ==========
+  - id: ROOT_001
+    name: "缺少 Root 检测"
+    severity: Low
+    category: "运行环境"
+    description: "应用未检测 Root 环境，可能在 Root 设备上面临更高的安全风险。"
+    suggestion: "在关键操作前检测 Root 状态，Root 设备应限制敏感功能。"
+    type: keyword
+    keyword: "RootDetection"
+    max_deduction: 2
+
+# 评分配置
+scoring:
+  base_score: 100
+  severity_deduction:
+    Critical: 20
+    High: 10
+    Medium: 4
+    Low: 1
+    Info: 0
+  risk_levels:
+    - min: 90
+      label: "良好"
+    - min: 70
+      label: "一般"
+    - min: 40
+      label: "较高风险"
+    - min: 0
+      label: "高风险"

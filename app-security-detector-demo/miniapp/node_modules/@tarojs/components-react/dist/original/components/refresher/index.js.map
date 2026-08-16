@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sources":["../../../../src/components/refresher/index.ts"],"sourcesContent":["import { View } from '@tarojs/components'\n\n// TODO: Refresher 组件未实现，暂时使用 View 组件\nconst Refresher = View\n\nexport default Refresher\n"],"names":["Refresher","View"],"mappings":";;AAEA;AACMA,MAAAA,SAAS,GAAGC;;;;"}

@@ -1,0 +1,249 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+// 头部
+.header {
+  background: linear-gradient(160deg, $color-bg-dark 0%, #1E293B 70%, #1a1a2e 100%);
+  padding: 64rpx $page-padding $spacing-xl;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -20%;
+    width: 300rpx;
+    height: 300rpx;
+    background: radial-gradient(circle, rgba($color-primary, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  margin: 0 auto $spacing-md;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 32rpx rgba($color-primary, 0.25);
+  position: relative;
+  z-index: 1;
+}
+
+.avatarText {
+  font-size: 52rpx;
+  color: $color-text-white;
+}
+
+.nickname {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  margin-bottom: $spacing-xs;
+  position: relative;
+  z-index: 1;
+}
+
+.username {
+  font-size: $font-size-sm;
+  color: rgba($color-text-white, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.loginPrompt {
+  padding: $spacing-lg 0;
+  position: relative;
+  z-index: 1;
+}
+
+.loginText {
+  font-size: $font-size-md;
+  color: rgba($color-text-white, 0.7);
+  margin-bottom: $spacing-md;
+}
+
+.btnLogin {
+  width: 240rpx;
+  height: $button-height-md;
+  margin: 0 auto;
+  background: rgba($color-text-white, 0.15);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  @include button-reset;
+  border: 2rpx solid rgba($color-text-white, 0.3);
+  transition: all $transition-base;
+
+  &:active {
+    background: rgba($color-text-white, 0.25);
+  }
+}
+
+// 内容区
+.section {
+  padding: 0 $page-padding;
+  margin-top: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.card {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+}
+
+.cardItem {
+  padding: $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1rpx solid $color-divider;
+  transition: background $transition-fast;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.cardItemLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.cardItemIcon {
+  font-size: 32rpx;
+}
+
+.cardItemLabel {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.cardItemValue {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.description {
+  padding: $spacing-md;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+}
+
+.btnLogout {
+  width: 100%;
+  height: $button-height-md;
+  margin-top: $spacing-lg;
+  background: $color-bg-card;
+  color: $color-error;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+  border: 1rpx solid rgba($color-error, 0.2);
+  @include button-reset;
+  transition: all $transition-base;
+
+  &:active {
+    background: rgba($color-error, 0.05);
+  }
+}
+
+// 工具状态
+.toolRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.toolName {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}
+
+.toolOk {
+  font-size: $font-size-xs;
+  color: $color-success;
+}
+
+.toolWarn {
+  font-size: $font-size-xs;
+  color: $color-warning;
+}
+
+// 规则列表
+.ruleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ruleLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex: 1;
+}
+
+.ruleDot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ruleName {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}
+
+.ruleCat {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  white-space: nowrap;
+}
+
+.itemText {
+  padding: $spacing-md;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.bottomSafe {
+  height: calc(140rpx + env(safe-area-inset-bottom));
+}

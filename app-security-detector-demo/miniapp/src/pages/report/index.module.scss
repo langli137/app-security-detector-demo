@@ -1,0 +1,318 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: 0 $page-padding;
+}
+
+.scoreCard {
+  background: linear-gradient(160deg, $color-bg-dark 0%, #1E293B 100%);
+  margin: 0 (-$page-padding);
+  padding: $spacing-xl $page-padding;
+  text-align: center;
+}
+
+.scoreCircle {
+  width: 160rpx;
+  height: 160rpx;
+  margin: 0 auto $spacing-md;
+  border-radius: $radius-round;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+
+  &.safe { border: 4rpx solid $color-safe; }
+  &.moderate { border: 4rpx solid $color-moderate; }
+  &.risky { border: 4rpx solid $color-risky; }
+  &.danger { border: 4rpx solid $color-danger; }
+}
+
+.scoreNum {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  color: $color-text-white;
+
+  &.safe { color: $color-safe; }
+  &.moderate { color: $color-moderate; }
+  &.risky { color: $color-risky; }
+  &.danger { color: $color-danger; }
+}
+
+.scoreUnit {
+  font-size: $font-size-xs;
+  color: rgba($color-text-white, 0.5);
+}
+
+.riskLevel {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  margin-bottom: $spacing-sm;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-lg;
+}
+
+.summaryItem {
+  text-align: center;
+}
+
+.summaryNum {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.summaryLabel {
+  font-size: $font-size-xs;
+  color: rgba($color-text-white, 0.5);
+}
+
+.infoCard {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-top: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-xs 0;
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  max-width: 400rpx;
+  @include text-ellipsis;
+}
+
+// AI 分析卡片
+.aiCard {
+  background: linear-gradient(135deg, rgba($color-primary, 0.05) 0%, rgba($color-primary-light, 0.08) 100%);
+  border: 1rpx solid rgba($color-primary, 0.15);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.aiHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-sm;
+}
+
+.aiBadge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: 2rpx 12rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: $radius-round;
+}
+
+.aiTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.aiAssessment {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  margin-bottom: $spacing-sm;
+}
+
+.aiIssue {
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.aiIssueName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.aiIssueImpact {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.aiFixGuide {
+  margin-top: $spacing-sm;
+}
+
+.aiFixStep {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-xs 0;
+}
+
+.aiFixNum {
+  width: 36rpx;
+  height: 36rpx;
+  background: $color-primary;
+  color: $color-text-white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.aiFixDetail {
+  flex: 1;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}
+
+.findingsSection {
+  margin-top: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.findingCard {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-sm;
+  box-shadow: $shadow-card;
+}
+
+.findingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-xs;
+}
+
+.findingName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  flex: 1;
+  margin-right: $spacing-sm;
+  @include text-ellipsis;
+}
+
+.severityBadge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: 2rpx 12rpx;
+  border-radius: $radius-round;
+  white-space: nowrap;
+
+  &.high { background: rgba($color-error, 0.1); color: $color-error; }
+  &.medium { background: rgba($color-warning, 0.1); color: #B45309; }
+  &.low { background: rgba($color-primary, 0.1); color: $color-primary; }
+  &.info { background: rgba($color-text-tertiary, 0.1); color: $color-text-tertiary; }
+}
+
+.findingCat {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-xs;
+}
+
+.findingFile {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-xs;
+  font-family: monospace;
+}
+
+.findingEvid {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  background: $color-bg-hover;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-xs;
+  margin-bottom: $spacing-xs;
+  word-break: break-all;
+}
+
+.findingDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-xs;
+  line-height: $line-height-normal;
+}
+
+.findingSug {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  line-height: $line-height-normal;
+}
+
+.disclaimer {
+  text-align: center;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: $spacing-lg;
+  padding: 0 $spacing-md;
+}
+
+.exportRow {
+  display: flex;
+  justify-content: center;
+  margin-top: $spacing-md;
+  padding: 0 $spacing-md;
+}
+
+.btnExport {
+  background: $color-bg-card;
+  color: $color-primary;
+  border: 1rpx solid rgba($color-primary, 0.2);
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  padding: 8rpx 32rpx;
+}
+
+.emptyText {
+  text-align: center;
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+  padding: $spacing-xl 0;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-xl * 2 0;
+}
+
+.bottomSafe {
+  height: calc(40rpx + env(safe-area-inset-bottom));
+}

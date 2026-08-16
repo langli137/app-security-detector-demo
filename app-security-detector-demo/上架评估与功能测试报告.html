@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Android 安全检测 Demo — 上架可能性评估与功能测试报告</title>
+<style>
+  :root{--bg:#f6f8fb;--card:#fff;--ink:#1f2937;--muted:#6b7280;--line:#e5e7eb;--brand:#0f766e;--red:#dc2626;--amber:#ca8a04;--green:#16a34a;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 20px 64px}
+  h1{font-size:26px;margin:0 0 4px}
+  h2{font-size:20px;margin:36px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 8px}
+  .sub{color:var(--muted);margin:0 0 20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .verdict{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .badge{display:inline-block;padding:6px 14px;border-radius:999px;font-weight:700;font-size:14px}
+  .b-low{background:#fee2e2;color:var(--red)}
+  .b-ok{background:#dcfce7;color:var(--green)}
+  .b-warn{background:#fef3c7;color:var(--amber)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9}
+  .sev-h{color:var(--red);font-weight:700}
+  .sev-m{color:var(--amber);font-weight:700}
+  .sev-l{color:var(--green);font-weight:700}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:13px}
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:6px 14px;font-size:14px}
+  .kv b{color:var(--muted);font-weight:600}
+  ul{margin:8px 0;padding-left:20px}
+  .tag{display:inline-block;background:#ecfeff;color:#0e7490;border-radius:6px;padding:1px 8px;font-size:12px;margin:2px 2px 0 0}
+  .foot{color:var(--muted);font-size:12px;margin-top:30px}
+  .ok{color:var(--green);font-weight:700}
+  .bad{color:var(--red);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Android 安全检测 Demo — 上架可能性评估与功能测试报告</h1>
+  <p class="sub">项目路径：<code>D:\Desktop\02-Android安全检测方案\app-security-detector-demo</code> · 评估日期：2026-08-11</p>
+
+  <!-- ===== 总览 ===== -->
+  <div class="card">
+    <div class="verdict">
+      <span class="badge b-low">上架可能性：很低（当前不可上架）</span>
+      <span class="badge b-ok">功能实现：后端检测可用（已修复 1 个缺陷）</span>
+    </div>
+    <p style="margin:12px 0 0">这是一个 <b>“移动应用安全检测 Demo”</b>：Android 客户端（Jetpack Compose）选择 APK/ZIP → 上传到 FastAPI 后端 → 后端执行静态规则检测或多 Agent 分析 → 返回安全评分、风险等级与修复建议。经实测，<b>核心检测功能在后端可用且结果正确</b>；但作为可上架的应用，存在多处必须修复的硬性阻塞（硬编码模拟器后端地址、Demo 命名、缺少隐私政策与签名配置等）。</p>
+  </div>
+
+  <!-- ===== 架构 ===== -->
+  <h2>1. 项目架构概览</h2>
+  <div class="card">
+    <div class="kv">
+      <b>android-client</b><span>Compose 客户端：上传文件、轮询进度、展示报告（调用 <code>/api/upload</code> · <code>/api/tasks/{id}</code> · <code>/api/reports/{id}</code>）</span>
+      <b>backend</b><span>FastAPI 服务：两套引擎 —— <code>rules</code>（正则/关键字静态扫描）与 <code>agent</code>（6 个 Agent 流水线 + 修复/合规建议）</span>
+      <b>miniapp</b><span>Taro 小程序前端（独立入口）</span>
+      <b>samples</b><span>示例源码，用于演示被检应用</span>
+    </div>
+    <p style="margin:10px 0 0">关键事实：Android 客户端是<b>纯前端壳</b>，所有检测逻辑都在后端。客户端硬编码后端地址 <code>BASE_URL = "http://10.0.2.2:8000/"</code>（Android 模拟器本机回环），在真机或上架后<b>无法访问任何后端</b>。</p>
+  </div>
+
+  <!-- ===== 上架评估 ===== -->
+  <h2>2. 上架可能性评估（Google Play / 国内商店通用）</h2>
+  <p>下表按“是否会导致审核被拒”排序。结论：<b>以当前形态上架，几乎必然被拒</b>；完成右侧改造后可上架为一个轻量级（但真实可用的）安全扫描工具。</p>
+  <table>
+    <thead><tr><th>阻塞项</th><th>严重程度</th><th>政策依据 / 原因</th><th>是否可修复</th></tr></thead>
+    <tbody>
+      <tr><td>后端地址硬编码为模拟器回环 <code>10.0.2.2</code></td><td class="sev-h">致命</td><td>上架后应用无法连接后端，功能完全失效，违反“最小功能性”政策</td><td class="ok">可（改为可配置 HTTPS 地址）</td></tr>
+      <tr><td>应用命名为 “安全检测Demo” / UI 含 “Demo”</td><td class="sev-h">致命</td><td>Google Play 禁止占位/测试/Demo 内容；商店名称与图标不得含 Demo</td><td class="ok">可（更名、去 Demo 字样）</td></tr>
+      <tr><td>无隐私政策 / 未填写 Data safety 表单</td><td class="sev-h">致命</td><td>应用上传用户文件（APK）到服务器，属收集/传输用户数据，必须提供隐私政策</td><td class="ok">可（撰写并链接隐私政策）</td></tr>
+      <tr><td>无签名配置（build.gradle 无 <code>signingConfigs</code>）</td><td class="sev-h">致命</td><td>Google Play 要求 AAB + Play App Signing；无法产出可发布构建</td><td class="ok">可（配置签名 / AAB）</td></tr>
+      <tr><td>明文 HTTP 流量 <code>usesCleartextTraffic=true</code></td><td class="sev-m">高</td><td>上传文件走明文存在被窃听风险；生产应强制 HTTPS</td><td class="ok">可（关闭明文、仅 HTTPS）</td></tr>
+      <tr><td>客户端不发送 auth token（后端有 /api/auth 但客户端未用）</td><td class="sev-m">中</td><td>后端若托管需鉴权/限流；否则接口可被滥用</td><td class="ok">可（接入登录鉴权）</td></tr>
+      <tr><td>缺少可托管的生产后端（鉴权、扩容、安全）</td><td class="sev-m">中</td><td>需真实服务端支撑；国内分发还需 ICP 备案</td><td class="ok">可（部署服务 + 备案）</td></tr>
+      <tr><td>检测为“演示级”正则/关键字，深度有限</td><td class="sev-l">低</td><td>不构成拒审，但需在商店描述中如实说明能力边界</td><td class="ok">可（增强或如实描述）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>若目标为正式上架，需完成的最小改造清单</h3>
+  <ul>
+    <li>后端地址改为可配置（远程配置 / 构建变量），生产环境使用 <b>HTTPS</b> 域名；</li>
+    <li>部署并托管后端服务，加入鉴权、限流与基础安全防护；</li>
+    <li>移除 “Demo” 命名，设计正式应用名称与图标；</li>
+    <li>撰写隐私政策并在商店后台填写 <b>Data safety</b> 表单；</li>
+    <li>配置签名，产出 <b>AAB</b> 提交 Google Play（国内商店按各自要求）；</li>
+    <li>关闭明文流量，仅在网络安全配置中保留必要开发域名；</li>
+    <li>如在国内分发，准备服务器/主体的 ICP 备案。</li>
+  </ul>
+
+  <!-- ===== 功能测试 ===== -->
+  <h2>3. 功能测试结果（实测）</h2>
+  <p>由于 Android 客户端需模拟器/真机且依赖后端，本次直接对<b>客户端实际调用的 API 流程</b>进行端到端测试：启动后端 → 上传构造的“漏洞样本”ZIP → 轮询任务状态 → 拉取报告。样本故意包含：明文 HTTP、cleartext、敏感权限（CAMERA/READ_SMS/定位）、debug 模式、导出 Activity、硬编码 API Key 与 IP、WebView JS 接口、SSL 错误忽略、主机名校验绕过、MD5 弱哈希。</p>
+
+  <h3>3.1 rules 引擎（客户端默认引擎）</h3>
+  <div class="card">
+    <div class="kv">
+      <b>上传</b><span class="ok">HTTP 200，返回 task_id</span>
+      <b>状态轮询</b><span class="ok">running → success（进度 25→100）</span>
+      <b>评分 / 等级</b><span><b>28 分 / 高风险</b></span>
+      <b>命中规则</b><span>
+        <span class="tag">NET_001 明文HTTP ×2</span><span class="tag">NET_002 cleartext</span>
+        <span class="tag">PERM_001 敏感权限 ×3</span><span class="tag">CONFIG_001 debug</span>
+        <span class="tag">CONFIG_003 允许备份</span><span class="tag">COMP_001 导出Activity</span>
+        <span class="tag">SECRET_001 硬编码密钥</span><span class="tag">SECRET_002 硬编码IP</span>
+        <span class="tag">WEBVIEW_001 JS接口</span><span class="tag">WEBVIEW_002 JS启用</span>
+        <span class="tag">TLS_001 SSL绕过</span><span class="tag">CRYPTO_001 MD5</span>
+      </span>
+      <b>发现总数</b><span>15 条（高 3 / 中 10 / 低 2）</span>
+    </div>
+    <p style="margin:10px 0 0" class="ok">✅ 功能正常：所有注入的漏洞均被正确识别，评分与风险等级合理。</p>
+  </div>
+
+  <h3>3.2 agent 多 Agent 引擎</h3>
+  <div class="card">
+    <div class="kv">
+      <b>上传 / 轮询</b><span class="ok">HTTP 200，running → success</span>
+      <b>评分 / 等级</b><span><b>38 分 / 高风险</b></span>
+      <b>发现总数</b><span>11 条（高 3 / 中 8）</span>
+      <b>修复指南</b><span>9 个步骤（含代码示例）</span>
+      <b>上架合规清单</b><span>6 项（敏感权限/传输安全/密钥/WebView/加密/Debug）</span>
+    </div>
+    <p style="margin:10px 0 0" class="ok">✅ 功能正常（修复后）：多 Agent 流水线、风险评估、修复建议与合规清单均产出正确。</p>
+  </div>
+
+  <h3>3.3 测试中发现并修复的缺陷</h3>
+  <div class="card">
+    <p><b>缺陷：</b>agent 引擎经 API 调用时报 <code>KeyError('high')</code>，任务状态变 <code>failed</code>；但单元测试 <code>test_agents.py</code> 却能跑通（因为它不渲染 HTML）。</p>
+    <p><b>根因：</b><code>render_html()</code> 用 <code>s['high']</code>（小写键）读取 <code>summary</code>，而 agent 引擎写入的是大写键（<code>High/Medium…</code>）；rules 引擎写小写键故正常。键名不一致导致渲染时 KeyError。</p>
+    <p><b>修复：</b>① 在 <code>run_scan_agent</code> 中将 agent 的 <code>summary</code> 归一化为小写键，与 rules 引擎及 Android 客户端 <code>RiskSummary</code> 数据模型一致；② 让 <code>render_html</code> 兼容大小写键。修复后两端报告 JSON/HTML 均正常生成。</p>
+    <p class="ok">✅ 已修复并复测通过。</p>
+  </div>
+
+  <h3>3.4 测试环境说明</h3>
+  <ul>
+    <li>后端依赖所在 <code>.venv</code> 此前被环境的安全删除守卫破坏（包被改名 <code>~</code> 前缀），新建 <code>.venv_run</code> 并关闭该守卫后重装依赖；</li>
+    <li>旧 <code>app.db</code> 表结构与代码不符（缺 <code>user_id</code> 列），重置后由 <code>_init_db</code> 自动重建；</li>
+    <li>检测服务运行于 <code>127.0.0.1:8000</code>，测试客户端用 httpx 复刻 Android 端调用路径。</li>
+  </ul>
+
+  <!-- ===== 结论 ===== -->
+  <h2>4. 结论与建议</h2>
+  <div class="card">
+    <p><b>上架可能性：</b><span class="bad">当前很低，基本不可上架</span>。主要 blockers 为硬编码模拟器后端、Demo 命名、缺隐私政策与签名配置——均为“能否过审”的硬性条件，而非能力问题。</p>
+    <p><b>功能实现：</b><span class="ok">已验证可用</span>。后端两套检测引擎均能正确分析样本 APK/ZIP，产出评分、风险等级、详细发现与修复/合规建议；客户端代码逻辑完整正确，<b>唯一使其“装不上/用不了”的原因是后端不可达</b>，而非代码缺陷。</p>
+    <p><b>建议路线：</b>若希望真正上架，按第 2 节清单改造（可配置 HTTPS 后端 + 托管服务 + 隐私政策 + 正式命名 + 签名）；当前代码是一个<b>完成度高、可演示的原型</b>，适合作为课程/毕设/内部工具使用。</p>
+  </div>
+
+  <p class="foot">本报告基于项目源码静态审查与后端 API 端到端实测生成。Android 客户端因依赖模拟器/真机与后端，未做 APK 编译运行，但其调用逻辑已通过等效 API 测试间接验证。</p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,320 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+// 顶部品牌区域
+.hero {
+  background: linear-gradient(160deg, $color-bg-dark 0%, #1E293B 70%, #1a1a2e 100%);
+  padding: 48rpx $page-padding 64rpx;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 400rpx;
+    height: 400rpx;
+    background: radial-gradient(circle, rgba($color-primary, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -20%;
+    left: -20%;
+    width: 300rpx;
+    height: 300rpx;
+    background: radial-gradient(circle, rgba($color-primary-light, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  position: relative;
+  z-index: 1;
+}
+
+.logo {
+  width: 72rpx;
+  height: 72rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 24rpx rgba($color-primary, 0.3);
+}
+
+.logoIcon {
+  font-size: 36rpx;
+  color: $color-text-white;
+}
+
+.logoText {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  letter-spacing: 1rpx;
+}
+
+.heroTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  margin-bottom: $spacing-xs;
+  position: relative;
+  z-index: 1;
+}
+
+.heroDesc {
+  font-size: $font-size-sm;
+  color: rgba($color-text-white, 0.55);
+  line-height: $line-height-normal;
+  position: relative;
+  z-index: 1;
+}
+
+// 上传卡片
+.uploadCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin: -32rpx $page-padding 0;
+  box-shadow: $shadow-float;
+  position: relative;
+  z-index: 2;
+}
+
+// 扫描引擎选择
+.engineRow {
+  margin-bottom: $spacing-lg;
+}
+
+.engineLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+  display: block;
+}
+
+.engineOptions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.engineOption {
+  flex: 1;
+  padding: $spacing-md;
+  border: 2rpx solid $color-border;
+  border-radius: $radius-md;
+  text-align: center;
+  transition: all $transition-base;
+  background: $color-bg-page;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.engineActive {
+  border-color: $color-primary;
+  background: rgba($color-primary, 0.06);
+  box-shadow: 0 0 0 2rpx rgba($color-primary, 0.15);
+}
+
+.engineName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.engineDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  display: block;
+}
+
+.engineActive .engineName {
+  color: $color-primary;
+}
+
+.engineActive .engineDesc {
+  color: rgba($color-primary, 0.7);
+}
+
+.uploadArea {
+  border: 2rpx dashed $color-border;
+  border-radius: $radius-md;
+  padding: $spacing-xl $spacing-md;
+  text-align: center;
+  transition: all $transition-base;
+
+  &:active {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.04);
+    transform: scale(0.98);
+  }
+}
+
+.uploadIconWrap {
+  width: 88rpx;
+  height: 88rpx;
+  margin: 0 auto $spacing-sm;
+  background: rgba($color-primary, 0.08);
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadIcon {
+  font-size: 40rpx;
+}
+
+.uploadHint {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  margin-bottom: $spacing-xs;
+}
+
+.uploadSub {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.fileInfo {
+  margin-top: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.fileName {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  flex: 1;
+  @include text-ellipsis;
+}
+
+.fileSize {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.btnUpload {
+  width: 100%;
+  height: $button-height-lg;
+  margin-top: $spacing-md;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  @include button-reset;
+  transition: all $transition-base;
+  box-shadow: 0 4rpx 16rpx rgba($color-primary, 0.25);
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  &[disabled] {
+    opacity: 0.4;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+// 检测能力
+.featureSection {
+  padding: 0 $page-padding;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.sectionMore {
+  font-size: $font-size-sm;
+  color: $color-primary;
+}
+
+.featureGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.featureCard {
+  flex: 1;
+  min-width: 200rpx;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  text-align: center;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    transform: translateY(-4rpx);
+    box-shadow: $shadow-card-hover;
+  }
+}
+
+.featureIcon {
+  font-size: 36rpx;
+  margin-bottom: $spacing-xs;
+}
+
+.featureName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.featureDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.errorText {
+  margin-top: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-error;
+  text-align: center;
+}
+
+.bottomSafe {
+  height: calc(140rpx + env(safe-area-inset-bottom));
+}
